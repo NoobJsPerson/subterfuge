@@ -139,9 +139,7 @@ fn run_checks(save_file: SaveFile, file_path: &String) {
                 .lines()
                 .enumerate()
                 .find(|(_, line)| line.contains(snippet))
-                .unwrap_or_else(|| {
-                    (0, "Could not retrieve snippet due to new lines.")
-                });
+                .unwrap_or_else(|| (0, "Could not retrieve snippet due to new lines."));
 
             let err1 = format!(
                 "|- {}. {}",
@@ -242,13 +240,13 @@ fn problem_passed(save_file: &SaveFile, problem: &Problem) {
             if (tier.p && save_file.premium) || !tier.p {
                 money += tier.amount;
             }
-    
+
             json["bp_tier"] = Value::from(bp_tier);
             bp_xp -= 200;
         } else {
             continue;
         }
-    }    
+    }
 
     json["current_problem"] = Value::from(current_problem);
     json["money"] = Value::from(money);
@@ -272,7 +270,10 @@ fn update_field(field: &str, value: bool) {
     fs::write(file_path, updated_json_string).unwrap();
 }
 fn move_file(problem: Problem, file_path: &String) {
-    let _ = fs::copy(file_path, "history/".to_owned() + &rand::thread_rng().gen_range(10..10000).to_string() + file_path);
+    let _ = fs::copy(
+        file_path,
+        "history/".to_owned() + &rand::thread_rng().gen_range(10..10000).to_string() + file_path,
+    );
 
     let _ = fs::write(
         file_path,
@@ -324,25 +325,28 @@ fn main() -> Result<()> {
     } else if arg == "battlepass" {
         tui::display_battlepass(&save_file)
     } else if arg == "claim" {
-        if arg2.unwrap_or_else(|| {
-            println!("Please provide the promo code.");
-            process::exit(1)
-        }) == "KJGQ77"
-        {
-            update_field("premium", true)
-        }
+		let unused: String = "".to_string();
+        arg2.unwrap_or_else(|| {
+            println!("Didn't provide a promo code? Don't worry, we got you covered!");
+			return &unused;
+        });
+        update_field("premium", true);
+        println!("You've successfully claimed the promo code! You now have access to the premium features.");
     } else if arg == "use" {
         // haha
     } else if arg == "peek" {
         tui::peek(&save_file)
     } else if arg == "support" {
-    let arg = arg2.unwrap_or_else(|| {
-        println!("Please provide the content creator.");
-        process::exit(1)
-    }).clone().yellow();
-    
-    println!("You are now supporting: {}.", arg)
-} else {
+        let arg = arg2
+            .unwrap_or_else(|| {
+                println!("Please provide the content creator.");
+                process::exit(1)
+            })
+            .clone()
+            .yellow();
+
+        println!("You are now supporting: {}.", arg)
+    } else {
         run_checks(save_file, arg);
     }
 
