@@ -241,7 +241,7 @@
     }
   ],
   "money": 0,
-  "premium": false,
+  "premium": true,
   "problems": [
     {
       "append": "",
